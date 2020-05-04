@@ -148,8 +148,12 @@ static void CMSIS_init(void) {
   GPIOB->OTYPER &= ~(1 << 3); // push/pull (clear open drain)
   /** USART */
   RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
-  USART1->BRR = (48000000 / 16 * 9600); // 9600 baud
+  USART1->BRR = (48000000 / 9600); // 9600 baud
   USART1->CR1 |= (USART_CR1_TE | USART_CR1_RE | USART_CR1_PEIE | USART_CR1_RXNEIE | USART_CR1_UE);
+  GPIOA->MODER |= (0x02 << 2); // Set alternate function (USART_TX)
+  GPIOA->MODER |= (0x02 << 15); // Set alternate function (USART_RX)
+  GPIOA->OSPEEDR |= (0x03 << 15); // Set high speed 50Mhz
+  GPIOA->AFR[1] |= (0x01 << GPIO_AFRH_AFRH7_Pos); // Set alternate function register to AF1 for pin 15 (RX)
 }
 
 void USART1_IRQHandler(void) {
