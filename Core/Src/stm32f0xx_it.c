@@ -56,7 +56,6 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
-extern UART_HandleTypeDef huart1;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -138,24 +137,6 @@ void SysTick_Handler(void)
 /* For the available peripheral interrupt handler names,                      */
 /* please refer to the startup file (startup_stm32f0xx.s).                    */
 /******************************************************************************/
-
-/**
-  * @brief This function handles USART1 global interrupt / USART1 wake-up interrupt through EXTI line 25.
-  */
-//void USART1_IRQHandler(void)
-//{
-//  /* USER CODE BEGIN USART1_IRQn 0 */
-//
-//  /* USER CODE END USART1_IRQn 0 */
-////  HAL_UART_IRQHandler(&huart1);
-//  /* USER CODE BEGIN USART1_IRQn 1 */
-//  if (USART1->ISR & USART_ISR_RXNE) { // If RX not empty
-//      char temp = USART1->RDR; // Receive data register
-//      // Flash the LED for every byte (send more bytes to and observe longer period of illumination)
-//      GPIOB->ODR |= (0x01 << 3);
-//    }
-//  /* USER CODE END USART1_IRQn 1 */
-//}
 
 /* USER CODE BEGIN 1 */
 

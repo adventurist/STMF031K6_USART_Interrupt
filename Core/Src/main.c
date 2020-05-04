@@ -81,11 +81,9 @@ int main(void) {
 
   /* USER CODE END SysInit */
 
-  /* Initialize all configured peripherals */
   /* USER CODE BEGIN 2 */
-  CMSIS_init();
-  /** Interrupt */
-  NVIC_EnableIRQ(USART1_IRQn);
+  NVIC_EnableIRQ(USART1_IRQn); // Enable interrupt
+  CMSIS_init(); // GPIO and USART
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -94,9 +92,9 @@ int main(void) {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    if (GPIOB->ODR & (0x01 << 3)) {
+    if (GPIOB->ODR & (0x01 << 3)) { // If LED on
       HAL_Delay(200);
-      GPIOB->ODR &= ~(0x01 << 3);
+      GPIOB->ODR &= ~(0x01 << 3); // Turn off
     }
   }
   /* USER CODE END 3 */
@@ -141,35 +139,38 @@ void SystemClock_Config(void) {
 /* USER CODE BEGIN 4 */
 static void CMSIS_init(void) {
   /** GPIO */
-  RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
-  RCC->AHBENR |= RCC_AHBENR_GPIOBEN;
-  GPIOB->MODER  &= ~(0x3 << (3 * 2)); // Clear
-  GPIOB->MODER  |=  (0x1 << (3 * 2)); // Configure LED to output
-  GPIOB->OTYPER &= ~(1 << 3); // push/pull (clear open drain)
+  RCC->AHBENR |= RCC_AHBENR_GPIOAEN; // Enable port A peripheral clock
+  RCC->AHBENR |= RCC_AHBENR_GPIOBEN; // Enable port B peripheral clock
+  GPIOB->MODER  &= ~(0x03 << (3 * 2)); // Clear IO mode
+  GPIOB->MODER  |=  (0x01 << (3 * 2)); // Configure LED to output
+  GPIOB->OTYPER &= ~(0x01 << 3); // push/pull (clear open drain)
   /** USART */
-  RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
+  RCC->APB2ENR |= RCC_APB2ENR_USART1EN; // Enable USART peripheral clock
   USART1->BRR = (48000000 / 9600); // 9600 baud
   USART1->CR1 |= (USART_CR1_TE | USART_CR1_RE | USART_CR1_PEIE | USART_CR1_RXNEIE | USART_CR1_UE);
-  GPIOA->MODER |= (0x02 << 2); // Set alternate function (USART_TX)
-  GPIOA->MODER |= (0x02 << 15); // Set alternate function (USART_RX)
-  GPIOA->OSPEEDR |= (0x03 << 15); // Set high speed 50Mhz
+  GPIOA->MODER |= (0x02 << 2 * 2); // Set alternate function (USART_TX)
+  GPIOA->OSPEEDR |= (0x03 << 2 * 2); // Set high speed 50MHz
+  GPIOA->OTYPER &= ~(0x01 << (2 * 2));
+  GPIOA->MODER |= (0x02 << 15 * 2); // Set alternate function (USART_RX)
+  GPIOA->OSPEEDR |= (0x03 << 15 * 2); // Set high speed 50MHz
   GPIOA->AFR[1] |= (0x01 << GPIO_AFRH_AFRH7_Pos); // Set alternate function register to AF1 for pin 15 (RX)
 }
 
 void USART1_IRQHandler(void) {
+
   if (USART1->ISR & USART_ISR_RXNE) { // If RX not empty
-    char received_data = USART1->RDR; // Receive data register
-    GPIOB->ODR |= (0x01 << 3); // Turn on Green LED
+    char receive = USART1->RDR;
+    GPIOB->ODR |= (0x01 << 3);
   }
 }
 
 /* USER CODE END 4 */
+
 /**
   * @brief  This function is executed in case of error occurrence.
   * @retval None
   */
-void Error_Handler(void)
-{
+void Error_Handler(void) {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
 
