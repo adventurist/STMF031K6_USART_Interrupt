@@ -41,16 +41,12 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-UART_HandleTypeDef huart1;
-
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-//static void MX_GPIO_Init(void);
-static void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
 static void CMSIS_init(void);
 /* USER CODE END PFP */
@@ -64,8 +60,7 @@ static void CMSIS_init(void);
   * @brief  The application entry point.
   * @retval int
   */
-int main(void)
-{
+int main(void) {
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
@@ -87,7 +82,6 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-//  MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
   CMSIS_init();
   /** Interrupt */
@@ -144,30 +138,7 @@ void SystemClock_Config(void) {
   }
 }
 
-/**
-  * @brief GPIO Initialization Function
-  * @param None
-  * @retval None
-  */
-//static void MX_GPIO_Init(void)
-//{
-//  GPIO_InitTypeDef GPIO_InitStruct = {0};
-//
-//  /* GPIO Ports Clock Enable */
-//  __HAL_RCC_GPIOF_CLK_ENABLE();
-//  __HAL_RCC_GPIOA_CLK_ENABLE();
-//  __HAL_RCC_GPIOB_CLK_ENABLE();
-//
-//  /*Configure GPIO pin : PB3 */
-//  GPIO_InitStruct.Pin = GPIO_PIN_3;
-//  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-//  GPIO_InitStruct.Pull = GPIO_NOPULL;
-//  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-//
-//}
-
 /* USER CODE BEGIN 4 */
-
 static void CMSIS_init(void) {
   /** GPIO */
   RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
@@ -175,7 +146,6 @@ static void CMSIS_init(void) {
   GPIOB->MODER  &= ~(0x3 << (3 * 2)); // Clear
   GPIOB->MODER  |=  (0x1 << (3 * 2)); // Configure LED to output
   GPIOB->OTYPER &= ~(1 << 3); // push/pull (clear open drain)
-
   /** USART */
   RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
   USART1->BRR = (48000000 / 16 * 9600); // 9600 baud
@@ -184,14 +154,12 @@ static void CMSIS_init(void) {
 
 void USART1_IRQHandler(void) {
   if (USART1->ISR & USART_ISR_RXNE) { // If RX not empty
-    char temp = USART1->RDR; // Receive data register
-    // Flash the LED for every byte (send more bytes to and observe longer period of illumination)
-    GPIOB->ODR |= (0x01 << 3);
+    char received_data = USART1->RDR; // Receive data register
+    GPIOB->ODR |= (0x01 << 3); // Turn on Green LED
   }
 }
 
 /* USER CODE END 4 */
-
 /**
   * @brief  This function is executed in case of error occurrence.
   * @retval None
