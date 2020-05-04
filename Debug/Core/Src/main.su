@@ -1,0 +1,6 @@
+core_cm0.h:623:22:__NVIC_EnableIRQ	16	static
+main.c:67:5:main	8	static
+main.c:115:6:SystemClock_Config	96	static
+main.c:171:13:CMSIS_init	8	static
+main.c:185:6:USART1_IRQHandler	16	static
+main.c:199:6:Error_Handler	8	static
