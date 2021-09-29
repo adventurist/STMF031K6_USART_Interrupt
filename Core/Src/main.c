@@ -88,13 +88,15 @@ int main(void) {
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1) {
+  for (;;)
+  {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    if (GPIOB->ODR & (0x01 << 3)) { // If LED on
+    if (GPIOB->ODR & (0x01 << 3))  // If LED on
+    {
       HAL_Delay(200);
-      GPIOB->ODR &= ~(0x01 << 3); // Turn off
+      GPIOB->ODR &= ~(0x01 << 3);  // Turn off
     }
   }
   /* USER CODE END 3 */
@@ -139,21 +141,21 @@ void SystemClock_Config(void) {
 /* USER CODE BEGIN 4 */
 static void CMSIS_init(void) {
   /** GPIO */
-  RCC->AHBENR |= RCC_AHBENR_GPIOAEN; // Enable port A peripheral clock
-  RCC->AHBENR |= RCC_AHBENR_GPIOBEN; // Enable port B peripheral clock
-  GPIOB->MODER  &= ~(0x03 << (3 * 2)); // Clear IO mode
-  GPIOB->MODER  |=  (0x01 << (3 * 2)); // Configure LED to output
-  GPIOB->OTYPER &= ~(0x01 << 3); // push/pull (clear open drain)
+  RCC->AHBENR    |= RCC_AHBENR_GPIOAEN; // Enable port A peripheral clock
+  RCC->AHBENR    |= RCC_AHBENR_GPIOBEN; // Enable port B peripheral clock
+  GPIOB->MODER   &= ~(0x03 << (3 * 2)); // Clear IO mode
+  GPIOB->MODER   |=  (0x01 << (3 * 2)); // Configure LED to output
+  GPIOB->OTYPER  &= ~(0x01 << 3); // push/pull (clear open drain)
   /** USART */
-  RCC->APB2ENR |= RCC_APB2ENR_USART1EN; // Enable USART peripheral clock
-  USART1->BRR = (48000000 / 9600); // 9600 baud
-  USART1->CR1 |= (USART_CR1_TE | USART_CR1_RE | USART_CR1_PEIE | USART_CR1_RXNEIE | USART_CR1_UE);
-  GPIOA->MODER |= (0x02 << 2 * 2); // Set alternate function (USART_TX)
+  RCC->APB2ENR   |= RCC_APB2ENR_USART1EN; // Enable USART peripheral clock
+  USART1->BRR     = (48000000 / 9600); // 9600 baud
+  USART1->CR1    |= (USART_CR1_TE | USART_CR1_RE | USART_CR1_PEIE | USART_CR1_RXNEIE | USART_CR1_UE);
+  GPIOA->MODER   |= (0x02 << 2 * 2); // Set alternate function (USART_TX)
   GPIOA->OSPEEDR |= (0x03 << 2 * 2); // Set high speed 50MHz
-  GPIOA->OTYPER &= ~(0x01 << (2 * 2));
-  GPIOA->MODER |= (0x02 << 15 * 2); // Set alternate function (USART_RX)
+  GPIOA->OTYPER  &= ~(0x01 << (2 * 2));
+  GPIOA->MODER   |= (0x02 << 15 * 2); // Set alternate function (USART_RX)
   GPIOA->OSPEEDR |= (0x03 << 15 * 2); // Set high speed 50MHz
-  GPIOA->AFR[1] |= (0x01 << GPIO_AFRH_AFRH7_Pos); // Set alternate function register to AF1 for pin 15 (RX)
+  GPIOA->AFR[1]  |= (0x01 << GPIO_AFRH_AFRH7_Pos); // Set alternate function register to AF1 for pin 15 (RX)
 }
 
 void USART1_IRQHandler(void) {
